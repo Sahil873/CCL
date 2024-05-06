@@ -1,0 +1,31 @@
+Download vmdk: https://drive.google.com/drive/u/0/folders/1me_nJJh0fvdDOXX3ew2jzGQpoP7f_iFt
+Tools -> Welcome -> New 
+Tools -> Network -> Create
+VM -> Setting -> Network -> Nat-[Nat Network] -> Ok
+start both VMs
+username, passwork -> vagrant
+VM1:
+  touch filename.txt
+  nano filename.txt
+  ctrl X, Y, enter
+  scp filename.txt username@ipaddr:path
+  yes
+  password
+VM2:
+  ls
+  cat filename.txt
+
+C Compiler
+sudo apt update 
+sudo apt install build-essentials  // sudo apt install gcc
+gcc --version
+touch demo.c
+nano demo.c
+#include<stdio.h>
+int main() {
+	printf("Hello World");
+	return 0;
+}
+ctrl X, Y, enter
+gcc demo.c
+./a.out

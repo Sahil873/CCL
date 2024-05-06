@@ -1,0 +1,86 @@
+eclipse ide
+cloudsim
+jdk
+jre
+
+package custom_package;
+
+import java.util.*;
+
+class Process {
+    int pid;
+    int arrivalTime;
+    int burstTime;
+    int waitingTime;
+    int turnaroundTime;
+    boolean completed;
+
+    public Process(int pid, int arrivalTime, int burstTime) {
+        this.pid = pid;
+        this.arrivalTime = arrivalTime;
+        this.burstTime = burstTime;
+        this.waitingTime = 0;
+        this.turnaroundTime = 0;
+        this.completed = false;
+    }
+}
+
+
+public class RoundRobin {
+	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
+		
+		System.out.print("Enter the number of processes: ");
+        int n = scanner.nextInt();
+
+        List<Process> processes = new ArrayList<>();
+        for (int i = 1; i <= n; i++) {
+            System.out.println("Enter arrival time and burst time for process " + i + ":");
+            int arrivalTime = scanner.nextInt();
+            int burstTime = scanner.nextInt();
+            processes.add(new Process(i, arrivalTime, burstTime));
+        }
+        
+        // Sort processes based on arrival time
+        processes.sort(Comparator.comparingInt(p -> p.arrivalTime));
+        
+        int currentTime = 0;
+        float totalWaitingTime = 0;
+        float totalTurnaroundTime = 0;
+        System.out.println("\nProcess execution order:");
+        while (!processes.isEmpty()) {
+            Process shortestJob = null;
+            int shortestBurst = Integer.MAX_VALUE;
+            int indexToRemove = -1;
+            for (int i = 0; i < processes.size(); i++) {
+                Process p = processes.get(i);
+                if (p.arrivalTime <= currentTime && !p.completed && p.burstTime < shortestBurst) {
+                    shortestJob = p;
+                    shortestBurst = p.burstTime;
+                    indexToRemove = i;
+                }
+            }
+            if (shortestJob != null) {
+                shortestJob.waitingTime = currentTime - shortestJob.arrivalTime;
+                shortestJob.turnaroundTime = shortestJob.waitingTime + shortestJob.burstTime;
+                totalWaitingTime += shortestJob.waitingTime;
+                totalTurnaroundTime += shortestJob.turnaroundTime;
+                currentTime += shortestJob.burstTime;
+                shortestJob.completed = true;
+                System.out.println("Process " + shortestJob.pid + " (AT: " + shortestJob.arrivalTime +
+                        ", BT: " + shortestJob.burstTime + ") completed. WT: " + shortestJob.waitingTime +
+                        ", TAT: " + shortestJob.turnaroundTime);
+                processes.remove(indexToRemove);
+            } else {
+                currentTime++;
+            }
+        }
+        
+        float avgWaitingTime = totalWaitingTime / n;
+        float avgTurnaroundTime = totalTurnaroundTime / n;
+        System.out.println("\nAverage Waiting Time: " + avgWaitingTime);
+        System.out.println("Average Turnaround Time: " + avgTurnaroundTime);
+
+		scanner.close();
+	}
+}
